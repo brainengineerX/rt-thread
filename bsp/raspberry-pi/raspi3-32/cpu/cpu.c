@@ -60,7 +60,35 @@ void rt_hw_spin_lock(rt_hw_spinlock_t *lock)
 
     __DMB();
 }
+rt_bool_t rt_hw_spin_trylock(rt_hw_spinlock_t *lock)
+{
+    unsigned long contended, res;
+	unsigned long slock;
 
+    __asm__ __volatile__(
+            "pld [%0]"
+            ::"r"(&lock->slock)
+            );
+
+	do {
+		__asm__ __volatile__(
+		"	ldrex	%0, [%3]\n"
+		"	mov	%2, #0\n"
+		"	subs	%1, %0, %0, ror #16\n"
+		"	addeq	%0, %0, %4\n"
+		"	strexeq	%2, %0, [%3]"
+		: "=&r" (slock), "=&r" (contended), "=&r" (res)
+		: "r" (&lock->slock), "I" (1 << 16)
+		: "cc");
+	} while (res);
+
+	if (!contended) {
+		__DMB();
+		return 1;
+	} else {
+		return 0;
+	}
+}
 void rt_hw_spin_unlock(rt_hw_spinlock_t *lock)
 {
     __DMB();

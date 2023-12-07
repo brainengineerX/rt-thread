@@ -53,7 +53,9 @@ RTM_EXPORT(rt_spin_lock_init)
  */
 void rt_spin_lock(struct rt_spinlock *lock)
 {
-    rt_hw_spin_lock(&lock->lock);
+    if(!rt_hw_spin_trylock(&lock->lock))
+        rt_hw_spin_lock(&lock->lock);
+        
 #if defined(RT_DEBUGING_SPINLOCK)
     if (rt_cpu_self() != RT_NULL)
     {

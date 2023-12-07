@@ -53,7 +53,13 @@ void rt_hw_spin_lock(rt_hw_spinlock_t *lock)
         spin_lock_unsafe_blocking((spin_lock_t*)lock->slock);
     }
 }
-
+rt_bool_t rt_hw_spin_trylock(rt_hw_spinlock_t *lock)
+{
+    if ( lock->slock != 0 )
+    {
+        return is_spin_locked((spin_lock_t*)lock->slock);
+    }
+}
 void rt_hw_spin_unlock(rt_hw_spinlock_t *lock)
 {
     if ( lock->slock != 0 )

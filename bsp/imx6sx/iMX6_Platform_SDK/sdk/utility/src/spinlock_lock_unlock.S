@@ -61,6 +61,33 @@ spinlock_lock:
 
     .endfunc // spinlock_lock
     
+// int spin_trylock(spinlock_t *lock)
+    .global spin_trylock
+    .func spin_trylock
+spin_trylock:
+
+    ldrex   r1, [r0]                // Try to atomically load the current value of the spinlock
+    cmp     r1, #UNLOCKED            // Check if the spinlock is currently unlocked
+
+    bne     spin_trylock_fail       // If the spinlock is locked, return failure
+
+    mrc     p15, 0, r1, c0, c0, 5   // Get the CPU ID of the current processor
+    and     r1, r1, #3               // Extract the lower 2 bits of the CPU ID
+    strex   r2, r1, [r0]            // Try to acquire the lock by writing the CPU number into the spinlock
+    cmp     r2, #0                  // Check if the write was successful
+    bne     spin_trylock_fail       // If the write failed, return failure
+
+    dmb                             // Ensure that accesses to shared resources have completed
+
+    mov     r0, #1                  // Return value 1 indicates successful lock acquisition
+    bx      lr                      // Return to the caller
+
+spin_trylock_fail:
+    mov     r0, #0                  // Return value 0 indicates failed lock acquisition
+    bx      lr                      // Return to the caller
+
+    .endfunc // spin_trylock
+
 // void spinlock_unlock(spinlock_t * lock)
     .global spinlock_unlock
     .func spinlock_unlock

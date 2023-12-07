@@ -34,7 +34,10 @@ void rt_hw_spin_lock(rt_hw_spinlock_t *lock)
 {
     spinlock_lock((spinlock_t *)lock);
 }
-
+rt_bool_t rt_hw_spin_trylock(rt_hw_spinlock_t *lock)
+{
+    return spin_trylock((spinlock_t *)lock);
+}
 void rt_hw_spin_unlock(rt_hw_spinlock_t *lock)
 {
     spinlock_unlock((spinlock_t *)lock);

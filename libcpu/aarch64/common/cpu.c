@@ -104,6 +104,11 @@ void rt_hw_spin_lock(rt_hw_spinlock_t *lock)
     arch_spin_lock(lock);
 }
 
+rt_bool_t rt_hw_spin_trylock(rt_hw_spinlock_t *lock)
+{
+    return arch_spin_trylock(lock);
+}
+
 void rt_hw_spin_unlock(rt_hw_spinlock_t *lock)
 {
     arch_spin_unlock(lock);

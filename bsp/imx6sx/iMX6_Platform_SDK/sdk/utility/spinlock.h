@@ -98,6 +98,9 @@ void spinlock_init(spinlock_t * lock);
 //! @retval 1 A timeout occurred while waiting for the spinlock to be unlocked.
 int spinlock_lock(spinlock_t * lock, uint32_t timeout);
 
+
+int spin_trylock(spinlock_t *lock);
+
 //! @brief Unlock the given spinlock.
 //!
 //! @param lock Pointer to the spinlock to unlock.

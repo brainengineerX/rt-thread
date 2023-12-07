@@ -204,6 +204,7 @@ void rt_hw_ipi_send(int ipi_vector, unsigned int cpu_mask);
 
 void rt_hw_spin_lock_init(rt_hw_spinlock_t *lock);
 void rt_hw_spin_lock(rt_hw_spinlock_t *lock);
+rt_bool_t rt_hw_spin_trylock(rt_hw_spinlock_t *lock);
 void rt_hw_spin_unlock(rt_hw_spinlock_t *lock);
 
 extern rt_hw_spinlock_t _cpus_lock;
